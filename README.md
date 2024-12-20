@@ -50,31 +50,48 @@ The maximum possible groupings of adjacent ones are already shown in the figure.
 RegisterNumber: 24001191
 */
 ```
-module exp7(j,k,clk,q,qbar);
-input j,k,clk;
-output reg q,qbar;
-initial 
-begin
-q=1'b0;
-q=1'b1;
-end 
-
-always @(posedge clk)
-begin 
-q<=(j&~q)|(~k&q);
-qbar<=~q;
-end
+module exp7 (
+    input clk,    // Clock signal
+    input reset,  // Active-high reset signal
+    input j,      // J input
+    input k,      // K input
+    output reg q, // Output
+    output reg q_bar // Complement of output
+);
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            q <= 1'b0;       // Reset the flip-flop
+            q_bar <= 1'b1;   // Complement output
+        end
+        else begin
+            case ({j, k})
+                2'b00: ;              // No change
+                2'b01: begin          // Reset
+                    q <= 1'b0;
+                    q_bar <= 1'b1;
+                end
+                2'b10: begin          // Set
+                    q <= 1'b1;
+                    q_bar <= 1'b0;
+                end
+                2'b11: begin          // Toggle
+                    q <= ~q;
+                    q_bar <= ~q_bar;
+                end
+            endcase
+        end
+    end
 endmodule
 ```
 
 **RTL LOGIC FOR FLIPFLOPS**
 
-![Screenshot 2024-12-21 003312](https://github.com/user-attachments/assets/90258480-eedc-41f7-afee-da38be9d08dc)
+![Screenshot 2024-12-21 004353](https://github.com/user-attachments/assets/392816fa-ab60-4e39-8800-e4870bade336)
 
 
 **TIMING DIGRAMS FOR FLIP FLOPS**
 
-![Screenshot 2024-12-21 003518](https://github.com/user-attachments/assets/de549a00-be23-47b1-81e0-2147fb4f5ba7)
+![Screenshot 2024-12-21 004543](https://github.com/user-attachments/assets/abd38f8e-347e-4f14-9ae6-dc7085188746)
 
 
 **RESULTS**
